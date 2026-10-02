@@ -1,0 +1,31 @@
+{
+  "_comment": "Copy this file to config.json (gitignored) and fill in your own Fabric/Entra identifiers. See ../ENVIRONMENT_SETUP.md for where each value comes from.",
+  "_note": "sql_endpoint is optional -- it is resolved from workspace_id on first use.",
+
+  "sql_server": "<dev-warehouse-sql-endpoint>.datawarehouse.fabric.microsoft.com",
+  "workspace_id": "<dev-workspace-guid>",
+  "lakehouse_id": "<dev-lakehouse-guid>",
+
+  "environments": [
+    {
+      "key": "dev",
+      "workspace_id": "<dev-workspace-guid>",
+      "sql_endpoint": "<dev-warehouse-sql-endpoint>.datawarehouse.fabric.microsoft.com"
+    },
+    {
+      "key": "qa",
+      "workspace_id": "<qa-workspace-guid>",
+      "sql_endpoint": "<qa-warehouse-sql-endpoint>.datawarehouse.fabric.microsoft.com"
+    },
+    {
+      "key": "uat",
+      "workspace_id": "<uat-workspace-guid>"
+    },
+    {
+      "key": "prd",
+      "workspace_id": "<prd-workspace-guid>"
+    }
+  ],
+
+  "datadog_dashboard_url": "<datadog-secure-embed-base-url>"
+}

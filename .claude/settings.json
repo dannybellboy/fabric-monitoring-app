@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__claude_ai_HDX-Fabric-MCP-DEV__execute_query",
+      "Bash(python -c ' *)"
+    ]
+  }
+}

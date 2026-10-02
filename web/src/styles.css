@@ -1,0 +1,3652 @@
+/* Light palette on :root, dark redefined under prefers-color-scheme, so the app
+   follows the OS without a toggle to maintain. */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-alt: #f0f2f5;
+  --border: #d8dce3;
+  --border-strong: #b9c0cb;
+  --text: #1a1d23;
+  --text-muted: #626b7a;
+  --accent: #2d5fd0;
+  --accent-text: #ffffff;
+  --danger: #b4232b;
+  --danger-bg: #fdeced;
+  --warning: #8a5a00;
+  --warning-bg: #fdf4e0;
+  --success: #1c6b45;
+  --success-bg: #e7f5ed;
+  --info-bg: #e9eefb;
+  --shadow: 0 1px 2px rgba(16, 20, 28, 0.08), 0 4px 12px rgba(16, 20, 28, 0.06);
+  --radius: 6px;
+  --mono: ui-monospace, SFMono-Regular, 'Cascadia Mono', Consolas, monospace;
+
+  /* Diagram node fills, keyed to process kind rather than to status, so hue
+     answers "what is this" and the dashed outline answers "is it live". */
+  --node-pipeline: #e4f1ec;
+  --node-pipeline-line: #2f7d63;
+  /* "Silver" -- a Silver-layer stored proc, as opposed to a Gold one. */
+  --node-proc: #e7e9ed;
+  --node-proc-line: #6b7280;
+  --node-gold: #fbefd8;
+  --node-gold-line: #96670f;
+  --edge: #98a2b0;
+
+  /* Status palette — fixed, never themed, never reused for a data series.
+     Validated against this app's surfaces: CVD separation ΔE 11.3, normal-vision
+     ΔE 27.6. `warning` sits below 3:1 on white by design, so every status colour
+     ships with an icon and a text label and never carries meaning alone. */
+  --status-good: #0ca30c;
+  --status-warning: #fab219;
+  --status-critical: #d03b3b;
+  --status-neutral: #898781;
+  /* Glyph ink chosen per swatch luminance so it always clears contrast. */
+  --status-good-ink: #ffffff;
+  --status-warning-ink: #2a1e00;
+  --status-critical-ink: #ffffff;
+  --status-neutral-ink: #ffffff;
+
+  /* Ordinal ramp for the failure-age buckets — one hue, monotone lightness,
+     all four ordinal checks pass. Step 0 is the most severe bucket, so on a
+     light surface it is the darkest (most prominent) step. */
+  --age-0: #104281;
+  --age-1: #1c5cab;
+  --age-2: #2a78d6;
+  --age-3: #5598e7;
+  --age-4: #86b6ef;
+
+  /* Brand mark colours, sampled from the logo -- fixed, never themed, so the
+     mark and its accents read the same in light and dark mode. */
+  --brand-red: #ee4037;
+  --brand-orange: #f9a53d;
+  --brand-yellow: #fdd133;
+  --brand-purple: #7d4a9e;
+  --brand-blue: #25a8e0;
+  /* Ink for anything painted on a brand colour -- white clears both red and
+     purple, so unlike --accent-text this never needs a dark-mode swap. */
+  --brand-ink: #ffffff;
+
+  /* Full sweep, for decorative bars with nothing written on top of them. */
+  --brand-gradient: linear-gradient(
+    90deg,
+    var(--brand-yellow),
+    var(--brand-orange),
+    var(--brand-red),
+    var(--brand-purple),
+    var(--brand-blue)
+  );
+
+  /* Red -> purple only, for anything with text on top (buttons): both ends
+     clear white text (~3.9:1 and ~6.3:1) where yellow/orange would not. */
+  --brand-gradient-cta: linear-gradient(90deg, var(--brand-red), var(--brand-purple));
+
+  /* Royal blue, deliberately outside the brand palette: it marks a session that
+     can write to QA and UAT, and it should not be mistakable for ordinary
+     chrome. Fixed like the brand colours, so the signal reads identically in
+     light, dark and pink mode -- the one piece of UI that must not be themed
+     into looking normal. Clears white text at ~5.1:1. */
+  --admin-accent: #2f4fd0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14171c;
+    --surface: #1c2027;
+    --surface-alt: #23282f;
+    --border: #333a44;
+    --border-strong: #4a525e;
+    --text: #e6e9ee;
+    --text-muted: #9aa4b2;
+    --accent: #6b9bff;
+    --accent-text: #0f1116;
+    --danger: #ff8b8b;
+    --danger-bg: #3a1f22;
+    --warning: #e8bd6b;
+    --warning-bg: #362b16;
+    --success: #6fd39b;
+    --success-bg: #16301f;
+    --info-bg: #1e2740;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3);
+
+    --node-pipeline: #1b302a;
+    --node-pipeline-line: #5cbf9a;
+    --node-proc: #2a2e35;
+    --node-proc-line: #9aa3af;
+    --node-gold: #352b16;
+    --node-gold-line: #d8a94a;
+    --edge: #5d6875;
+
+    /* Status steps are mode-invariant: all three clear 3:1 on the dark surface. */
+
+    /* The ordinal ramp inverts on a dark surface — prominence carries magnitude,
+       so the most severe bucket takes the lightest (most prominent) step. Same
+       hue, same validated steps, read from the other end. */
+    --age-0: #9ec5f4;
+    --age-1: #6da7ec;
+    --age-2: #3987e5;
+    --age-3: #256abf;
+    --age-4: #184f95;
+  }
+}
+
+/* Manual override, set on <html> by the logo click handler in App.tsx. An
+   attribute selector on :root outweighs the plain `:root` inside the media
+   query above regardless of source order (0,2,0 > 0,1,0 specificity), so this
+   wins over the OS preference once a user has picked explicitly. No
+   attribute means "follow the OS", same as before this existed. */
+:root[data-theme='dark'] {
+  --bg: #14171c;
+  --surface: #1c2027;
+  --surface-alt: #23282f;
+  --border: #333a44;
+  --border-strong: #4a525e;
+  --text: #e6e9ee;
+  --text-muted: #9aa4b2;
+  --accent: #6b9bff;
+  --accent-text: #0f1116;
+  --danger: #ff8b8b;
+  --danger-bg: #3a1f22;
+  --warning: #e8bd6b;
+  --warning-bg: #362b16;
+  --success: #6fd39b;
+  --success-bg: #16301f;
+  --info-bg: #1e2740;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3);
+
+  --node-pipeline: #1b302a;
+  --node-pipeline-line: #5cbf9a;
+  --node-proc: #2a2e35;
+  --node-proc-line: #9aa3af;
+  --node-gold: #352b16;
+  --node-gold-line: #d8a94a;
+  --edge: #5d6875;
+
+  --age-0: #9ec5f4;
+  --age-1: #6da7ec;
+  --age-2: #3987e5;
+  --age-3: #256abf;
+  --age-4: #184f95;
+}
+
+:root[data-theme='light'] {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-alt: #f0f2f5;
+  --border: #d8dce3;
+  --border-strong: #b9c0cb;
+  --text: #1a1d23;
+  --text-muted: #626b7a;
+  --accent: #2d5fd0;
+  --accent-text: #ffffff;
+  --danger: #b4232b;
+  --danger-bg: #fdeced;
+  --warning: #8a5a00;
+  --warning-bg: #fdf4e0;
+  --success: #1c6b45;
+  --success-bg: #e7f5ed;
+  --info-bg: #e9eefb;
+  --shadow: 0 1px 2px rgba(16, 20, 28, 0.08), 0 4px 12px rgba(16, 20, 28, 0.06);
+
+  --node-pipeline: #e4f1ec;
+  --node-pipeline-line: #2f7d63;
+  --node-proc: #e7e9ed;
+  --node-proc-line: #6b7280;
+  --node-gold: #fbefd8;
+  --node-gold-line: #96670f;
+  --edge: #98a2b0;
+
+  --age-0: #104281;
+  --age-1: #1c5cab;
+  --age-2: #2a78d6;
+  --age-3: #5598e7;
+  --age-4: #86b6ef;
+}
+
+/* Undocumented third mode, toggled by the hidden button over the signed-in
+   user's name (see .pink-toggle) -- every themed variable recast in a single
+   pink hue family, including --prio-*, which the light/dark blocks above
+   leave fixed. Two exceptions, both about colour-coding process state rather
+   than decoration:
+   - --status-* stays out entirely: it drives Home's snapshots, the Health
+     tab, and Lineage, and that coding must read the same in every theme.
+   - --danger/--warning/--success/--info-bg (Home's kpi--critical/warning/
+     good/info tiles, plus notices and badges elsewhere) keep their normal
+     red/amber/green/blue hues rather than turning pink, just softened to
+     pastel so they still sit comfortably next to the rest of the palette. */
+:root[data-theme='pink'] {
+  --bg: #fff0f6;
+  --surface: #fff8fb;
+  --surface-alt: #ffe3ef;
+  --border: #f6b8d4;
+  --border-strong: #e884b3;
+  --text: #6b1440;
+  --text-muted: #a34c7a;
+  --accent: #d6336c;
+  --accent-text: #ffffff;
+  --danger: #c0392b;
+  --danger-bg: #fbe3e1;
+  --warning: #a6710b;
+  --warning-bg: #fdf0d9;
+  --success: #2f7d55;
+  --success-bg: #e3f5ea;
+  --info-bg: #e5ecfb;
+  --shadow: 0 1px 2px rgba(173, 20, 87, 0.15), 0 4px 12px rgba(173, 20, 87, 0.12);
+
+  --node-pipeline: #ffd6e8;
+  --node-pipeline-line: #c2185b;
+  --node-proc: #ffe3ef;
+  --node-proc-line: #ad1457;
+  --node-gold: #ffc1dd;
+  --node-gold-line: #880e4f;
+  --edge: #e08fb0;
+
+  --age-0: #880e4f;
+  --age-1: #ad1457;
+  --age-2: #c2185b;
+  --age-3: #e05a94;
+  --age-4: #f8bbd0;
+
+  --prio-high-bg: #ad1457;
+  --prio-medium-bg: #d6336c;
+  --prio-low-bg: #f48fb1;
+  --prio-unknown-bg: #e08fb0;
+  --prio-ink: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  padding: 6px 12px;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+button.primary {
+  background: var(--brand-gradient-cta);
+  border-color: transparent;
+  color: var(--brand-ink);
+  font-weight: 600;
+}
+
+button.primary:hover:not(:disabled) {
+  border-color: var(--brand-purple);
+  filter: brightness(1.06);
+}
+
+button.danger {
+  color: var(--danger);
+  border-color: var(--border-strong);
+}
+
+button.link {
+  border: none;
+  background: none;
+  color: var(--accent);
+  padding: 2px 4px;
+  text-decoration: underline;
+}
+
+input[type='text'],
+input[type='search'],
+input[type='date'],
+input[type='time'],
+input[type='number'],
+select {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 6px 8px;
+  width: 100%;
+}
+
+input:focus-visible,
+select:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* ---------- layout ---------- */
+
+/* Fixed rather than part of the flow, so it spans the full viewport width
+   instead of being boxed in by .app's max-width column. */
+.brand-stripe {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--brand-gradient);
+  z-index: 20;
+}
+
+/* An administrator's session: the top bar goes royal blue instead of the brand
+   sweep, and is thickened slightly so the change registers even to someone who
+   has never seen the normal one. This is the only ambient indication that the
+   Dependency Graph tab will let you write to QA and UAT. */
+.brand-stripe--admin {
+  background: var(--admin-accent);
+  height: 6px;
+}
+
+/* "Admin" over the top edge, centred. Deliberately not in the masthead: it
+   belongs to the window rather than to any tab, and it stays put when the page
+   scrolls. pointer-events: none because it is a marker, not a control -- it must
+   never eat a click meant for what is underneath it. */
+.admin-watermark {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 21;
+  padding: 4px 20px 5px;
+  border-radius: 0 0 8px 8px;
+  background: var(--admin-accent);
+  color: var(--brand-ink);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  pointer-events: none;
+  user-select: none;
+}
+
+.app {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 20px 24px 64px;
+}
+
+.masthead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.masthead h1 {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 20px;
+  margin: 0;
+}
+
+.brand-mark {
+  height: 22px;
+  width: auto;
+  vertical-align: -4px;
+  cursor: pointer;
+}
+
+/* Which build is running. Small, but present on every screen — a teammate
+   reporting a problem can read it off without being asked to dig. */
+.version {
+  margin-left: 8px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  vertical-align: 2px;
+}
+
+.masthead .who {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* Anchor for the undocumented pink-mode toggle -- sized to the name text by
+   being inline-block, so the overlay button below has something to cover
+   without claiming any extra space in the masthead. */
+.who-name {
+  position: relative;
+  display: inline-block;
+}
+
+/* Invisible on purpose: no border, no fill, no cursor change, no title --
+   this is only meant to be found by clicking, not by looking. Overrides the
+   global `button { cursor: pointer }` rule, which would otherwise give it
+   away on hover. */
+.pink-toggle {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  cursor: inherit;
+}
+
+/* A quiet pill rather than an underlined text link, so it reads as an action
+   and not another piece of identity text -- the red hover is the only hint
+   it's there until you actually mean to use it. */
+.signout {
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  color: var(--text-muted);
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+/* button.signout, not just .signout, to outrank the generic
+   `button:hover:not(:disabled)` border-colour rule above. */
+button.signout:hover {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+}
+
+.panel-body {
+  padding: 12px 14px;
+}
+
+/* ---------- notices ---------- */
+
+.notice {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.notice.info {
+  background: var(--info-bg);
+}
+.notice.error {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.notice.warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+.notice.success {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.notice strong {
+  display: block;
+}
+
+/* Server messages can be multi-paragraph (the ODBC install instructions, for
+   one). Preserve their line breaks so they read as written instead of collapsing
+   into a wall of text. */
+.notice > span {
+  white-space: pre-line;
+}
+
+.notice ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+
+.notice .dismiss {
+  margin-left: auto;
+  border: none;
+  background: none;
+  color: inherit;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 4px;
+}
+
+/* ---------- S2T "Validate against DDL" modal ---------- */
+
+.ddl-cell {
+  display: inline-block;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 12.5px;
+}
+
+.ddl-cell--match {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.ddl-cell--mismatch {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.ddl-cell--unknown {
+  color: var(--text-muted);
+}
+
+.ddl-cell--no-access {
+  color: var(--text-muted);
+  background: var(--surface-alt);
+  font-style: italic;
+}
+
+/* ---------------------------------------------------------------------------
+   Cross-environment dependency-graph comparison.
+
+   Two narrow tables rather than one wide grid: an edge that is missing
+   somewhere and an edge whose fields disagree are different problems, and
+   interleaving them produced rows whose every cell read as agreement while the
+   row was flagged as a difference -- which is what an edge existing in only one
+   environment looks like, since a lone environment agrees with itself.
+
+   Keeping the environments as the columns is also what removes the horizontal
+   scroll: four of those beats eleven fields, and no row needs the field columns
+   it agrees on.
+   --------------------------------------------------------------------------- */
+/* The dialog owns its height and scrolls inside itself. Without this the
+   backdrop is the scroll container, and `th { position: sticky }` then pins the
+   header to the *viewport* -- which is why a column header appeared floating in
+   the middle of the table. */
+.dialog--diff {
+  display: flex;
+  flex-direction: column;
+  height: min(880px, calc(100vh - 64px));
+  overflow: hidden;
+}
+
+.dialog--diff header {
+  flex-shrink: 0;
+}
+
+.dialog--diff .body {
+  flex: 1;
+  /* min-height:0 is what lets a flex child shrink below its content height. */
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Each section scrolls in its own box, so its sticky header pins against that
+   box and the two tables' headers can never pin at the same time. */
+.diff-scroll {
+  overflow: auto;
+  max-height: 34vh;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.diff-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 18px 0 6px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.diff-legend {
+  margin-left: auto;
+  font-size: 11px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+/* Fixed layout so the columns keep the widths below instead of being stretched
+   by their content. A warehouse name is 30 characters and there are four of
+   them; left to itself the table grew past the dialog and painted over the page
+   behind it, which is what forced a horizontal scroll. */
+.difftable {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.difftable col.diff-col-value {
+  width: 17%;
+}
+
+.difftable col.diff-col-apply {
+  width: 17%;
+}
+
+/* Stacked rather than side by side: two environment names sit wider than the
+   column, and stacking keeps "which side wins" a vertical choice of two. */
+.diff-apply-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.diff-apply {
+  padding: 3px 8px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* The cells an apply button governs span the edge's fields, so top-align the
+   button with the first of them rather than centring it against the group. */
+.difftable td[rowspan] {
+  vertical-align: top;
+}
+
+.difftable col.diff-col-field {
+  width: 15%;
+}
+
+.difftable col.diff-col-envlist {
+  width: 22%;
+}
+
+/* Which two environments are being compared. Sits above both tables because it
+   governs both, and reads left-to-right as the sentence it is. */
+.diff-pair-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.diff-swap {
+  padding: 4px 9px;
+  line-height: 1;
+}
+
+/* One value in a comparison. Every row in these tables is a difference by
+   definition, so colour cannot mean "differs" -- it marks direction instead.
+   The left environment is the baseline and reads plainly; the right is what
+   disagrees with it, in red. Swapping the pair swaps which is which, which is
+   what the swap button is for.
+
+   Wraps rather than clipping: a long value has to stay readable, and truncating
+   the middle of two warehouse names is exactly what makes them hard to compare. */
+.diff-cell {
+  display: inline-block;
+  max-width: 100%;
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.diff-cell--base {
+  background: var(--surface-alt);
+  color: var(--text);
+}
+
+.diff-cell--drift {
+  background: var(--danger-bg);
+  color: var(--danger);
+  font-weight: 600;
+}
+
+/* Separates one edge's run of disagreeing fields from the next edge's, since
+   the edge name is only printed on the first row of each run. */
+tr.diff-group-start > td {
+  border-top: 2px solid var(--border);
+}
+
+/* Environment header highlights for S2T validation */
+th.env--match {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+th.env--mismatch {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+/* ---------- toolbar ---------- */
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.toolbar .search {
+  flex: 1 1 260px;
+  max-width: 380px;
+}
+
+.toolbar select {
+  width: auto;
+  min-width: 130px;
+}
+
+.toolbar .count {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-left: auto;
+}
+
+/* ---------- table ---------- */
+
+.table-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th {
+  text-align: left;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  background: var(--surface-alt);
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+th.sortable:hover {
+  color: var(--text);
+}
+
+td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+tbody tr:hover td {
+  background: var(--surface-alt);
+}
+
+tbody tr.inactive td:not(.actions) {
+  opacity: 0.55;
+}
+
+td.name {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  max-width: 320px;
+  overflow-wrap: anywhere;
+}
+
+td.actions {
+  white-space: nowrap;
+  text-align: right;
+}
+
+td.muted,
+.muted {
+  color: var(--text-muted);
+}
+
+.empty {
+  padding: 32px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* ---------- badges ---------- */
+
+.flags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.badge.on {
+  background: var(--info-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.badge.off {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* ---------- issues list ---------- */
+
+.issues {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.issues li {
+  display: flex;
+  gap: 8px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.issues li:last-child {
+  border-bottom: none;
+}
+
+.issues .level {
+  flex: 0 0 62px;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding-top: 2px;
+}
+
+.issues .level.error {
+  color: var(--danger);
+}
+.issues .level.warning {
+  color: var(--warning);
+}
+
+summary {
+  cursor: pointer;
+  padding: 10px 14px;
+  font-weight: 600;
+}
+
+summary::marker {
+  color: var(--text-muted);
+}
+
+/* ---------- modal form ---------- */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 12, 16, 0.5);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 32px 16px;
+  overflow-y: auto;
+  /* Above the fixed page chrome -- the brand stripe (20) and the admin
+     watermark (21) -- because a dialog has to cover decoration, not be
+     overprinted by it. The watermark in particular sits centred on the top
+     edge, exactly where a dialog's own header is. */
+  z-index: 30;
+}
+
+.dialog {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 640px;
+}
+
+.dialog header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dialog header h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.dialog header p {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 12.5px;
+}
+
+.dialog .body {
+  padding: 16px 18px;
+}
+
+.dialog footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 18px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-alt);
+  border-radius: 0 0 8px 8px;
+}
+
+.field {
+  margin-bottom: 14px;
+}
+
+.field label {
+  display: block;
+  font-weight: 600;
+  font-size: 12.5px;
+  margin-bottom: 4px;
+}
+
+/* Read-only stand-in for an input/textarea: same box, no editing affordance. */
+.field-value {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-alt);
+  color: var(--text);
+  font-size: 13px;
+  min-height: 34px;
+}
+
+.field-value--block {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.field .hint {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.dep-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.dep-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dep-row input {
+  flex: 1 1 auto;
+}
+
+.dep-new-tag {
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.dep-active {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* An existing dependency with Active unchecked -- muted rather than removed
+   from the list, since unlike a brand-new entry it has history to keep. */
+.dep-row--inactive input[type='text'] {
+  color: var(--text-muted);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 14px;
+}
+
+.schedule-picker {
+  display: grid;
+  gap: 8px;
+}
+
+.schedule-control {
+  width: 100%;
+}
+
+.schedule-control--compact {
+  width: auto;
+  min-width: 72px;
+}
+
+.schedule-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.schedule-days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.schedule-day {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 54px;
+  padding: 4px 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-alt);
+}
+
+.schedule-day--button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 72px;
+  cursor: pointer;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border-color: var(--border-strong);
+}
+
+.schedule-day--button:hover {
+  border-color: var(--accent);
+  background: var(--info-bg);
+}
+
+.schedule-day__remove {
+  color: var(--danger);
+  font-size: 16px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.schedule-day input {
+  margin: 0;
+}
+
+@media (max-width: 560px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+fieldset {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  margin: 0 0 14px;
+}
+
+legend {
+  font-weight: 600;
+  font-size: 12.5px;
+  padding: 0 4px;
+}
+
+.checks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 6px 14px;
+}
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 13px;
+}
+
+.check input {
+  margin: 3px 0 0;
+  flex: 0 0 auto;
+}
+
+.check .desc {
+  display: block;
+  color: var(--text-muted);
+  font-size: 11.5px;
+}
+
+.check--inline {
+  align-items: center;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.check--inline input {
+  margin: 0;
+}
+
+/* ---------- tabs ---------- */
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+
+.tab {
+  position: relative;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: none;
+  color: var(--text-muted);
+  font-weight: 600;
+  padding: 8px 14px;
+}
+
+.tab:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.tab.is-active {
+  color: var(--accent);
+}
+
+/* Brand gradient underline instead of a flat border-colour -- border-color
+   can't take a gradient, so this sits in the same 2px the border reserves. */
+.tab.is-active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 2px;
+  background: var(--brand-gradient);
+}
+
+/* ---------- legend ---------- */
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.legend-hint {
+  margin-left: auto;
+  font-style: italic;
+}
+
+.env-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: -4px 0 10px;
+}
+
+/* Environment switcher on the Health tab. Rendered in every state, including
+   errors, so a failed environment can always be switched away from. */
+.env-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.env-bar-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.env-missing {
+  font-weight: 400;
+  opacity: 0.7;
+  font-size: 10.5px;
+}
+
+.freshness {
+  font-size: 12px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Hold the previous render while a poll is in flight — no skeleton, no layout
+   jump. Pointer events stay on so the table remains usable mid-refresh. */
+.is-refreshing {
+  opacity: 0.55;
+  transition: opacity 120ms ease-in;
+}
+
+.swatch {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  border: 1px solid var(--border-strong);
+  display: inline-block;
+}
+
+.swatch--pipeline {
+  background: var(--node-pipeline);
+  border-color: var(--node-pipeline-line);
+}
+.swatch--proc {
+  background: var(--node-proc);
+  border-color: var(--node-proc-line);
+}
+.swatch--gold {
+  background: var(--node-gold);
+  border-color: var(--node-gold-line);
+}
+/* ---------- graph canvas ---------- */
+
+.graph-wrap {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  min-height: 240px;
+}
+
+.graph-pane {
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  /* The wheel handler calls preventDefault, but this stops touch devices from
+     scrolling the page while panning the diagram. */
+  touch-action: none;
+}
+
+.graph-pane.is-panning {
+  cursor: grabbing;
+}
+
+.graph-controls {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 3px;
+  box-shadow: var(--shadow);
+}
+
+.graph-controls button {
+  padding: 2px 9px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.graph-zoom {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  min-width: 38px;
+  text-align: right;
+  padding-right: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Edges are drawn first so nodes always sit on top of them. */
+.gedge {
+  fill: none;
+  stroke: var(--edge);
+  stroke-width: 1.4;
+}
+
+.gedge--muted {
+  stroke-dasharray: 4 3;
+  opacity: 0.5;
+}
+
+.gedge--dim {
+  opacity: 0.12;
+}
+
+.garrow {
+  fill: var(--edge);
+}
+
+.gcluster {
+  font-size: 11px;
+  fill: var(--text-muted);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.gnode {
+  cursor: pointer;
+}
+
+.gnode-box {
+  fill: var(--node-pipeline);
+  stroke: var(--node-pipeline-line);
+  stroke-width: 1;
+}
+
+.gnode-accent {
+  fill: var(--node-pipeline-line);
+}
+
+.gnode-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  fill: var(--text);
+  pointer-events: none;
+}
+
+.gnode--proc .gnode-box {
+  fill: var(--node-proc);
+  stroke: var(--node-proc-line);
+}
+.gnode--proc .gnode-accent {
+  fill: var(--node-proc-line);
+}
+
+.gnode--gold .gnode-box {
+  fill: var(--node-gold);
+  stroke: var(--node-gold-line);
+}
+.gnode--gold .gnode-accent {
+  fill: var(--node-gold-line);
+}
+
+/* Deactivated is layered on top of whichever kind-colour the node already has
+   (gnode--gold, --proc or --pipeline) rather than replacing it with a fourth
+   colour: same hue, dashed outline, faded fill. Silver/gold/green stay the
+   only colour codes in the diagram; dashing plus fade is what says "off". */
+.gnode--inactive .gnode-box {
+  stroke-dasharray: 4 3;
+  fill-opacity: 0.5;
+}
+.gnode--inactive .gnode-accent {
+  fill-opacity: 0.5;
+}
+.gnode--inactive .gnode-label {
+  fill: var(--text-muted);
+}
+
+.gnode--cycle .gnode-box {
+  stroke: var(--danger);
+  stroke-width: 2;
+}
+
+.gnode:hover .gnode-box {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.gnode:focus-visible .gnode-box {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.gnode:focus {
+  outline: none;
+}
+
+.gnode--focus .gnode-box {
+  stroke: var(--accent);
+  stroke-width: 2.5;
+}
+
+.gnode--dim {
+  opacity: 0.2;
+}
+
+/* Health badge on a graph node. The glyph carries the meaning; the surface ring
+   keeps it legible where it sits over the node edge. */
+.gstatus {
+  pointer-events: auto;
+}
+
+.gstatus-dot {
+  stroke: var(--surface);
+  stroke-width: 2;
+}
+
+.gstatus-glyph {
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.gstatus--critical .gstatus-dot {
+  fill: var(--status-critical);
+}
+.gstatus--critical .gstatus-glyph {
+  fill: var(--status-critical-ink);
+}
+
+.gstatus--warning .gstatus-dot {
+  fill: var(--status-warning);
+}
+.gstatus--warning .gstatus-glyph {
+  fill: var(--status-warning-ink);
+}
+
+.gstatus--unknown .gstatus-dot {
+  fill: var(--status-neutral);
+}
+.gstatus--unknown .gstatus-glyph {
+  fill: var(--status-neutral-ink);
+}
+
+/* Badge on the Health tab so failures are visible from the other tabs. */
+.tab-badge {
+  display: inline-block;
+  margin-left: 6px;
+  min-width: 18px;
+  padding: 1px 5px;
+  border-radius: 9px;
+  background: var(--status-critical);
+  color: #ffffff;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1.5;
+  vertical-align: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- lineage popup ---------- */
+
+.dialog--wide {
+  max-width: 1080px;
+}
+
+.body--flush {
+  padding: 14px 18px 18px;
+}
+
+/* The lineage popup takes a fixed generous height rather than shrink-wrapping its
+   content: the header and the source list take what they need and the diagram
+   absorbs the rest, so a short lineage still gets a diagram worth looking at
+   instead of a letterbox. Capped at the viewport -- the 64px is .backdrop's own
+   vertical padding -- so it never needs scrolling either.
+   `min()` rather than height + max-height, because a min-height would win over a
+   max-height and push a short window back into scrolling. */
+.dialog--focus {
+  display: flex;
+  flex-direction: column;
+  height: min(820px, calc(100vh - 64px));
+  overflow: hidden;
+}
+
+.dialog--focus header {
+  flex-shrink: 0;
+}
+
+.dialog--focus .body {
+  display: flex;
+  flex-direction: column;
+  /* min-height:0 is what actually lets a flex child shrink below its content;
+     without it the diagram would push the dialog past max-height again. */
+  min-height: 0;
+  flex: 1;
+}
+
+.focus-graph {
+  flex: 1;
+  /* Below this the diagram is too cramped to read, so a very short window scrolls
+     rather than showing a sliver of graph. */
+  min-height: 320px;
+  display: flex;
+}
+
+/* .graph-wrap carries min-height:240px for the full-page diagram, where it stops
+   the pane collapsing. Here the flex parent already sets the floor, and leaving
+   240 in place would push the dialog past max-height on a short window. */
+.focus-graph .graph-wrap {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Text around the diagram keeps its full height; only the diagram itself flexes. */
+.dialog--focus .focus-hint,
+.dialog--focus .notice {
+  flex-shrink: 0;
+}
+
+.focus-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.focus-head h2 {
+  font-family: var(--mono);
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+
+.focus-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.focus-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.focus-stats > div {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+}
+
+.stat-value {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+  display: block;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.focus-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+}
+
+.focus-lists {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+@media (max-width: 700px) {
+  .focus-lists {
+    grid-template-columns: 1fr;
+  }
+}
+
+.focus-lists h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.chip {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  color: var(--text);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
+/* A dependency deactivated on its own while the rest of the process stays
+   active -- struck through rather than hidden, so it doesn't look forgotten. */
+.chip--inactive {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  border-style: dashed;
+}
+
+/* A chip with nowhere to navigate: a source table nothing in this graph builds
+   (a bronze landing table, or an external feed). Dimmed so the clickable ones
+   next to it read as the ones worth trying. */
+.chip--static {
+  color: var(--text-muted);
+  cursor: default;
+}
+
+/* Which tables a stored proc reads, from HDX.Table_Columns. Full width rather
+   than the two-column .focus-lists grid -- it is one list, and source names are
+   long. */
+.focus-sources {
+  margin-top: 14px;
+  flex-shrink: 0;
+  /* A table mapped from thirty sources would otherwise crowd out the diagram, so
+     the list keeps its own scrollbar past a third of the popup. Every *section*
+     stays on screen either way, which is the point. */
+  max-height: 32vh;
+  overflow-y: auto;
+}
+
+.focus-sources h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+}
+
+/* The procedure behind a node now labelled with its table. */
+.focus-proc {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   Status dashboard
+   ========================================================================== */
+
+.dash-hero {
+  display: flex;
+  align-items: stretch;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 18px 20px;
+}
+
+/* Hero figure: exactly one per view, >=48px, in the same sans as everything
+   else, with proportional figures (tabular-nums makes a 2-digit number look
+   loose at display size). */
+.hero-figure {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 210px;
+  padding-right: 24px;
+  border-right: 1px solid var(--border);
+}
+
+.hero-value {
+  font-size: 56px;
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.hero-label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.hero-sub {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+@media (max-width: 800px) {
+  .hero-figure {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 0 0 14px;
+    width: 100%;
+  }
+}
+
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 12px;
+  flex: 1 1 420px;
+  align-content: center;
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.kpi-label {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.kpi-value {
+  font-size: 26px;
+  font-weight: 650;
+  line-height: 1.1;
+}
+
+.kpi-note {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+/* ---------- home: per-environment snapshots ---------- */
+
+/* Kept as a stack of thin rows rather than a grid: four short rows read as an
+   at-a-glance ladder from PRD down to DEV, and staying thin (rather than a
+   2-up grid) is what keeps all four on screen with no scroll. */
+.env-snapshots {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.env-snapshot {
+  margin-bottom: 0;
+}
+
+.env-snapshot .panel-head {
+  padding: 7px 14px;
+}
+
+.env-snapshot-kpis {
+  padding: 8px 14px;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+}
+
+/* Each tile carries its own pale tint -- same hues as the notice banners --
+   so a card can show a red "Failing" tile next to a green "Healthy" one
+   rather than one colour standing in for the whole environment. */
+.env-snapshot-kpis .kpi {
+  padding: 4px 10px;
+  border-radius: var(--radius);
+  background: var(--surface-alt);
+}
+.env-snapshot-kpis .kpi-value {
+  font-size: 20px;
+}
+.env-snapshot-kpis .kpi--critical {
+  background: var(--danger-bg);
+}
+.env-snapshot-kpis .kpi--warning {
+  background: var(--warning-bg);
+}
+.env-snapshot-kpis .kpi--good {
+  background: var(--success-bg);
+}
+.env-snapshot-kpis .kpi--info {
+  background: var(--info-bg);
+}
+
+.env-snapshot-note {
+  font-size: 11.5px;
+  align-self: center;
+}
+
+/* ---------- charts ---------- */
+
+.dash-charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 860px) {
+  .dash-charts {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-card {
+  padding: 16px 18px;
+  margin-bottom: 0;
+  /* Grow with content so no nested scrollbar can crop a label. */
+  height: auto;
+}
+
+.chart-head h3 {
+  margin: 0;
+  font-size: 13.5px;
+}
+
+.chart-head p {
+  margin: 3px 0 14px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Part-to-whole bar. Capped thickness, 2px surface gaps doing the separating
+   (never a stroke), rounded only at the two outer data-ends. */
+.stack-bar {
+  display: flex;
+  height: 22px;
+  gap: 2px;
+  margin-bottom: 14px;
+}
+
+.stack-seg {
+  position: relative;
+  min-width: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stack-seg:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.stack-seg:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.stack-seg:only-child {
+  border-radius: 4px;
+}
+
+.stack-seg--critical {
+  background: var(--status-critical);
+}
+.stack-seg--warning {
+  background: var(--status-warning);
+}
+.stack-seg--good {
+  background: var(--status-good);
+}
+.stack-seg--unknown {
+  background: var(--status-neutral);
+}
+.stack-seg--inactive {
+  background: var(--border-strong);
+}
+.stack-seg--orphaned {
+  /* Distinct from --inactive's --border-strong: this is a data-hygiene gap
+     (renamed/removed), not a deliberate deactivation, and the two should not
+     read as the same thing at a glance. */
+  background: var(--text-muted);
+}
+
+/* An in-fill label is the one place text may leave the ink tokens: pick by the
+   fill's luminance so it always clears contrast. Only rendered when it fits. */
+.stack-seg-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.stack-seg--warning .stack-seg-label,
+.stack-seg--inactive .stack-seg-label,
+.stack-seg--orphaned .stack-seg-label {
+  color: var(--status-warning-ink);
+}
+
+.chart-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+}
+
+.chart-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.legend-label {
+  color: var(--text-secondary, var(--text-muted));
+}
+
+.legend-value {
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.swatch--critical {
+  background: var(--status-critical);
+  border-color: var(--status-critical);
+}
+.swatch--warning {
+  background: var(--status-warning);
+  border-color: var(--status-warning);
+}
+.swatch--good {
+  background: var(--status-good);
+  border-color: var(--status-good);
+}
+.swatch--unknown {
+  background: var(--status-neutral);
+  border-color: var(--status-neutral);
+}
+.swatch--inactive {
+  background: var(--border-strong);
+}
+.swatch--orphaned {
+  background: var(--text-muted);
+}
+
+/* Age buckets: horizontal bars on a hairline track, 4px rounded data-end,
+   square where they meet the baseline. */
+.age-bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.age-bars li {
+  display: grid;
+  grid-template-columns: 118px 1fr 28px;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.age-label {
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.age-track {
+  display: block;
+  height: 14px;
+  background: var(--surface-alt);
+  border-radius: 0 3px 3px 0;
+}
+
+.age-fill {
+  display: block;
+  height: 100%;
+  border-radius: 0 4px 4px 0;
+  min-width: 2px;
+}
+
+.age-fill[data-step='0'] {
+  background: var(--age-0);
+}
+.age-fill[data-step='1'] {
+  background: var(--age-1);
+}
+.age-fill[data-step='2'] {
+  background: var(--age-2);
+}
+.age-fill[data-step='3'] {
+  background: var(--age-3);
+}
+.age-fill[data-step='4'] {
+  background: var(--age-4);
+}
+
+.age-value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  text-align: right;
+}
+
+/* ---------- status pill: dot + icon + label, never colour alone ---------- */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--text);
+}
+
+.pill-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+.pill--critical .pill-icon {
+  background: var(--status-critical);
+  color: var(--status-critical-ink);
+}
+.pill--warning .pill-icon {
+  background: var(--status-warning);
+  color: var(--status-warning-ink);
+}
+.pill--good .pill-icon {
+  background: var(--status-good);
+  color: var(--status-good-ink);
+}
+.pill--unknown .pill-icon {
+  background: var(--status-neutral);
+  color: var(--status-neutral-ink);
+}
+.pill--inactive .pill-icon {
+  background: var(--border-strong);
+  color: var(--surface);
+}
+
+/* ---------- segmented filter control ---------- */
+
+.segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.segmented button {
+  border: none;
+  border-radius: 0;
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 12.5px;
+  padding: 5px 10px;
+}
+
+.segmented button:last-child {
+  border-right: none;
+}
+
+.segmented button.is-active {
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+/* ---------- triage table extras ---------- */
+
+td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.retry-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.retry-reset {
+  padding: 0 4px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.retry-reset:hover:not(:disabled) {
+  color: var(--accent);
+}
+
+th:has(+ th),
+td.num {
+  white-space: nowrap;
+}
+
+.row-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 3px;
+  font-size: 11px;
+}
+
+.age-never {
+  color: var(--status-critical);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Sign-in gate
+   ========================================================================== */
+
+.gate {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.gate-card {
+  width: 100%;
+  max-width: 520px;
+  padding: 26px 28px;
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Same idea as .brand-stripe, scoped to the card's own rounded corners. */
+.gate-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: var(--brand-gradient);
+}
+
+.gate-logo {
+  display: block;
+  height: 56px;
+  width: auto;
+  margin: 4px 0 14px;
+}
+
+.gate-card h1 {
+  margin: 0;
+  font-size: 21px;
+  letter-spacing: -0.01em;
+}
+
+.gate-sub {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin: 4px 0 20px;
+}
+
+.gate-button {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+.gate-hint {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin: 8px 0 10px;
+}
+
+.gate-steps {
+  margin: 8px 0 6px;
+  padding-left: 20px;
+}
+
+.gate-steps li {
+  margin-bottom: 5px;
+}
+
+/* The device code is read off the screen and typed elsewhere, so it needs to be
+   unmistakable: large, monospace, and loosely tracked. */
+.devicecode {
+  font-family: var(--mono);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 2px 7px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  user-select: all;
+}
+
+.gate-checks {
+  margin-top: 18px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  font-size: 12.5px;
+}
+
+.gate-checks summary {
+  padding: 0;
+  font-size: 12.5px;
+}
+
+.gate-checks .level {
+  flex: 0 0 18px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.gate-checks .level.fail {
+  color: var(--danger);
+}
+.gate-checks .level.warn {
+  color: var(--warning);
+}
+.gate-checks .level.skip {
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   S2T tab
+   ========================================================================== */
+
+.page-heading {
+  font-size: 17px;
+  margin: 0 0 2px;
+}
+
+.page-sub {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin: 0 0 14px;
+}
+
+/* Labelled select, so Target/Table read as a pair rather than bare dropdowns. */
+.picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.picker select {
+  width: auto;
+  min-width: 130px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text);
+}
+
+.picker--grow {
+  flex: 1 1 300px;
+}
+
+.picker--grow select {
+  width: 100%;
+  max-width: 460px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-alt);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.panel-head h3 {
+  margin: 0;
+  font-size: 13.5px;
+}
+
+.panel-head h3 .muted {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 400;
+}
+
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0 14px;
+}
+
+/* The join/filter/base-table fields hold real SQL: monospace, and tall enough to
+   read a CTE without scrolling for every line. */
+.sqlbox {
+  width: 100%;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 8px 10px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  resize: vertical;
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow-x: auto;
+}
+
+.sqlbox:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.inline-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0;
+  flex-wrap: wrap;
+}
+
+.inline-form input {
+  width: auto;
+  min-width: 220px;
+}
+
+/* Editable grid. Cells are borderless inputs so the row reads as a table until
+   you click into it. */
+.gridtable td {
+  padding: 3px 4px;
+  vertical-align: middle;
+}
+
+.gridtable .cell {
+  width: 100%;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 3px;
+  padding: 3px 5px;
+  font-size: 12px;
+}
+
+.gridtable .cell:hover {
+  border-color: var(--border);
+}
+
+.gridtable .cell:focus {
+  border-color: var(--accent);
+  background: var(--surface);
+  outline: none;
+}
+
+.gridtable .cell.mono {
+  font-family: var(--mono);
+  font-size: 11.5px;
+}
+
+.gridtable tr.is-dirty {
+  background: var(--info-bg);
+}
+
+.gridtable tr.is-dirty td:first-child::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 3px;
+  top: 0;
+  bottom: 0;
+  background: var(--accent);
+}
+
+.gridtable tr.is-dirty td:first-child {
+  position: relative;
+}
+
+.iconbtn {
+  border: none;
+  background: none;
+  color: var(--danger);
+  font-size: 16px;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.iconbtn:hover:not(:disabled) {
+  background: var(--danger-bg);
+}
+
+/* ==========================================================================
+   Deployment tracker
+   ========================================================================== */
+
+/* Double-click affordance on the fields editable in place without opening the
+   Edit dialog (Component Name, Notes). Dotted rather than solid so it doesn't
+   read as a hyperlink. */
+.editable-inline {
+  cursor: text;
+  border-radius: 3px;
+}
+
+.editable-inline:hover {
+  text-decoration: underline dotted var(--text-muted);
+  text-decoration-thickness: 1px;
+}
+
+/* Double-click affordance on fields that open the full Edit dialog rather than
+   an inline editor (Item). A pointer cursor rather than .editable-inline's text
+   cursor, since double-clicking here does not let you type in place. */
+.open-edit {
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.open-edit:hover {
+  text-decoration: underline dotted var(--text-muted);
+  text-decoration-thickness: 1px;
+}
+
+/* Reuses .gridtable .cell's borderless-until-focused look (same as the S2T
+   grid) rather than a full input chrome, so swapping the text for an editor
+   does not jump the row's height or styling. */
+.inline-edit {
+  font-weight: inherit;
+}
+
+/* The PI / Release cell's move-this-row dropdown. Sized to the token it shows
+   ("27.3.1") rather than to its widest option, so adding a release with a long
+   wave name cannot widen the column for every row. */
+.release-select {
+  width: 100%;
+  min-width: 62px;
+  padding: 2px 4px;
+  font-size: 12px;
+  color: inherit;
+}
+
+/* One line of the Components repeater: what it is called, what kind of thing it
+   is, and a way to drop it. The name takes the slack because it is the only
+   free-text part; the type is a fixed-width dropdown so the column of them
+   lines up down the list. */
+.component-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+}
+
+.component-row input[type='text'] {
+  flex: 1 1 auto;
+  /* Without this a long placeholder sets the flex basis and pushes the type
+     dropdown off the dialog. */
+  min-width: 0;
+}
+
+.component-row select {
+  flex: 0 0 240px;
+}
+
+.component-row button {
+  flex: 0 0 auto;
+  padding: 4px 10px;
+  line-height: 1;
+}
+
+/* One gate in the form: the flag that says it passed, and the day it did. The
+   date is disabled until the gate is ticked, so the two cannot disagree. */
+.gate-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.gate-row .check {
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.gate-row input[type='date'] {
+  width: auto;
+  flex: 0 0 auto;
+}
+
+/* Release dates and PI/Release must not wrap and double the row height. */
+td.nowrap {
+  white-space: nowrap;
+}
+
+/* Priority flag, standing in for a Priority column.
+ *
+ * Its own tokens rather than the status palette: --status-* is reserved for
+ * execution health on the Health tab, and a High-priority component is not an
+ * unhealthy one. The letter is always rendered, so colour never carries the
+ * meaning alone -- which is what lets the amber step be used at all. */
+:root {
+  --prio-high-bg: #c0392b;
+  --prio-medium-bg: #b45309;
+  --prio-low-bg: #1c6b45;
+  --prio-unknown-bg: #6b7280;
+  --prio-ink: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Lighter fills with dark ink: on the dark surface these clear contrast
+       where the light-mode fills would sink into the background. */
+    --prio-high-bg: #f2777a;
+    --prio-medium-bg: #e8a33d;
+    --prio-low-bg: #5cbf8f;
+    --prio-unknown-bg: #8b95a3;
+    --prio-ink: #14171c;
+  }
+}
+
+:root[data-theme='dark'] {
+  --prio-high-bg: #f2777a;
+  --prio-medium-bg: #e8a33d;
+  --prio-low-bg: #5cbf8f;
+  --prio-unknown-bg: #8b95a3;
+  --prio-ink: #14171c;
+}
+
+:root[data-theme='light'] {
+  --prio-high-bg: #c0392b;
+  --prio-medium-bg: #b45309;
+  --prio-low-bg: #1c6b45;
+  --prio-unknown-bg: #6b7280;
+  --prio-ink: #ffffff;
+}
+
+.prio {
+  display: inline-block;
+  min-width: 17px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-family: system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1.45;
+  text-align: center;
+  vertical-align: 1px;
+  color: var(--prio-ink);
+  background: var(--prio-unknown-bg);
+}
+
+.prio--high {
+  background: var(--prio-high-bg);
+}
+.prio--medium {
+  background: var(--prio-medium-bg);
+}
+.prio--low {
+  background: var(--prio-low-bg);
+}
+
+/* The Priority column: just the flag, centred, with none of the extra padding
+   a text column would get — it is a fixed-width badge, not a line of prose. */
+.prio-cell {
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Notes are usually empty and occasionally a sentence; cap the column and let
+   the title attribute carry the rest rather than letting one row set the height
+   of the whole grid. */
+.note-cell {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Ten gates across means a fixed, narrow column: checkbox over date, centred,
+   with the date in tabular figures so the column does not jitter row to row. */
+.gate-cell {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.gate-date {
+  display: block;
+  font-size: 10.5px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  /* Reserve the line whether or not the gate is passed, so checkboxes stay
+     aligned down the column instead of hopping as gates get ticked. */
+  min-height: 14px;
+}
+
+/* Progress along the ten gates. Deliberately the accent, not the status
+   palette, while any gate remains outstanding: this is a completion count, not
+   a health judgement, and reusing the status colours here would imply a
+   nine-of-ten row is "warning". Once all ten are passed there is nothing left
+   to misjudge, so that state alone gets --status-good -- the same green used
+   everywhere else in the app for "done, no further action". */
+.gate-progress {
+  height: 6px;
+  width: 100%;
+  min-width: 90px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 3px;
+}
+
+.gate-progress-fill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+
+.gate-progress.is-complete .gate-progress-fill {
+  background: var(--status-good);
+}
+
+/* ---------- failure detail ---------- */
+
+.cause {
+  margin-bottom: 14px;
+}
+
+.cause h3,
+.section-head {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin: 0 0 6px;
+}
+
+.cause-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 0 0 8px;
+  font-size: 13px;
+}
+
+/* Error text is verbatim provider output: preserve its newlines, wrap rather
+   than scroll horizontally, and keep it selectable for copying into a ticket. */
+.errtext {
+  margin: 0;
+  padding: 10px 12px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--status-critical);
+  border-radius: var(--radius);
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 260px;
+  overflow-y: auto;
+  user-select: text;
+}
+
+.act-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.act-list li {
+  display: grid;
+  grid-template-columns: 96px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12.5px;
+}
+
+.act-list li:last-child {
+  border-bottom: none;
+}
+
+.act-name {
+  font-family: var(--mono);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.act-dur {
+  font-variant-numeric: tabular-nums;
+  font-size: 11.5px;
+}
+
+/* ---------- MCP chat ---------- */
+
+.chat-panel {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: calc(100vh - 160px);
+}
+
+/* ---------- agent picker + New chat ---------- */
+
+.chat-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chat-toolbar-pane {
+  border-bottom: 1px solid var(--border);
+}
+
+.chat-agent {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+}
+
+.chat-agent > span {
+  color: var(--text-muted);
+}
+
+/* Pushed to the far end, away from the picker, so New chat is not a mis-click
+   target while choosing an agent. */
+.chat-new {
+  margin-left: auto;
+}
+
+/* Which agent produced a reply. Only shown once more than one is selectable, so
+   it stays quiet in the common single-agent case. */
+.chat-agent-tag {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* The scrolling pane is the panel body; the transcript inside it is a plain grid,
+   so the same transcript drops into the docked window unchanged. */
+.chat-log-pane {
+  overflow: auto;
+}
+
+.chat-log {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+/* Themed rather than hardcoded: this app has light, dark and pink palettes, and
+   the fixed greys this started with turned unreadable in two of the three. */
+.chat-bubble {
+  max-width: 75%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  overflow-wrap: anywhere;
+}
+
+.chat-bubble.assistant {
+  background: var(--surface-alt);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.chat-bubble.user {
+  margin-left: auto;
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+/* Only user messages are plain text; agent replies go through the markdown
+   renderer, which emits real blocks and must not inherit pre-wrap. */
+.chat-plain {
+  white-space: pre-wrap;
+}
+
+/* The opening line is guidance, not an answer, so it sits back a little from the
+   real replies it shares a column with. */
+.chat-greeting {
+  color: var(--text-muted);
+  background: none;
+  border-style: dashed;
+}
+
+.chat-pending {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chat-elapsed {
+  color: var(--text-muted);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Fabric returns nothing at all until the answer is complete, so there is no
+   partial text to show -- this animation is the only progress signal available. */
+.chat-dots {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.chat-dots > span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  animation: chat-blink 1.4s ease-in-out infinite both;
+}
+
+.chat-dots > span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.chat-dots > span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes chat-blink {
+  0%,
+  80%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+/* Respect a reduced-motion preference: keep the indicator, drop the movement. */
+@media (prefers-reduced-motion: reduce) {
+  .chat-dots > span {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+.chat-composer-pane {
+  border-top: 1px solid var(--border);
+}
+
+.chat-composer {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-composer textarea {
+  flex: 1;
+  resize: vertical;
+}
+
+/* ---------- rendered markdown (agent replies) ---------- */
+
+/* Collapse the outer margins so a bubble hugs its content, but keep the internal
+   rhythm between blocks. */
+.md > :first-child {
+  margin-top: 0;
+}
+
+.md > :last-child {
+  margin-bottom: 0;
+}
+
+.md h3,
+.md h4,
+.md h5 {
+  margin: 14px 0 6px;
+  line-height: 1.3;
+}
+
+.md h3 {
+  font-size: 15px;
+}
+
+.md h4 {
+  font-size: 14px;
+}
+
+.md h5 {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.md p {
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
+.md ul,
+.md ol {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.md li {
+  margin: 3px 0;
+  line-height: 1.5;
+}
+
+.md li > ul,
+.md li > ol {
+  margin: 3px 0;
+}
+
+.md code {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 4px;
+}
+
+.md pre {
+  margin: 8px 0;
+  padding: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow-x: auto;
+}
+
+/* The <pre> already supplies the frame; the inner <code> shouldn't draw a second. */
+.md pre code {
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 12px;
+}
+
+.md hr {
+  margin: 12px 0;
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
+.md table {
+  margin: 8px 0;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.md th,
+.md td {
+  border: 1px solid var(--border);
+  padding: 4px 8px;
+  text-align: left;
+}
+
+.md th {
+  background: var(--surface);
+}
+
+/* Row counts and error volumes line up column-wise when digits are tabular. */
+.md td {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- docked MCP chat (bottom-right, every tab) ---------- */
+
+/* Below .backdrop (z-index 30) on purpose: a modal form should cover the dock,
+   not the other way round. The brand stripe at 20 stays on top of the dock. */
+.chat-dock-tab,
+.chat-dock {
+  position: fixed;
+  right: 20px;
+  bottom: 0;
+  z-index: 9;
+}
+
+/* Collapsed: a single labelled bar sitting on the bottom edge, Messenger-style. */
+.chat-dock-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--border-strong);
+  border-bottom: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.chat-dock-tab:hover {
+  border-color: var(--accent);
+}
+
+/* An answer that landed while the chat was out of sight. */
+.chat-dock-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.chat-dock {
+  display: grid;
+  /* header, toolbar, transcript, composer */
+  grid-template-rows: auto auto 1fr auto;
+  width: 380px;
+  height: min(520px, calc(100vh - 120px));
+  border: 1px solid var(--border-strong);
+  border-bottom: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.chat-dock-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-alt);
+  font-size: 13px;
+}
+
+.chat-dock-close {
+  font-size: 18px;
+  line-height: 1;
+  padding: 0 4px;
+}
+
+.chat-dock-toolbar {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* The picker has to share 380px with the New chat button, so let it shrink
+   rather than pushing the button off the edge. */
+.chat-dock-toolbar .chat-agent select {
+  min-width: 0;
+  max-width: 180px;
+}
+
+.chat-dock-log {
+  padding: 12px;
+  overflow: auto;
+}
+
+/* Roomy bubbles in the tab would leave barely any width in a 380px window. */
+.chat-dock-log .chat-bubble {
+  max-width: 92%;
+  font-size: 13px;
+}
+
+.chat-dock-composer {
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+}
+
+/* Full width on a narrow viewport, where a 380px floating window would cover
+   most of the page it is meant to sit beside. */
+@media (max-width: 560px) {
+  .chat-dock {
+    right: 0;
+    left: 0;
+    width: auto;
+    border-radius: 0;
+  }
+}
+
+/* ============================================================================
+   ERD (Entity-Relationship Diagram) View
+   ============================================================================ */
+
+/* `.app` is a normal scrolling page with no height of its own, so a percentage
+   height here would resolve to auto and collapse the canvas to a strip. The
+   diagram is sized off the viewport instead, the same way the Lineage tab is. */
+.erd-view {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.erd-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.erd-search {
+  position: relative;
+  flex: 0 1 300px;
+}
+
+.erd-search input {
+  width: 100%;
+  padding-right: 26px;
+}
+
+.erd-search-clear {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 2px 6px;
+  color: var(--text-muted);
+}
+
+.erd-search-clear:hover {
+  color: var(--text);
+  background: none;
+}
+
+.erd-counts {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.erd-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.erd-scope-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Dotted underline because it carries a tooltip explaining the count. */
+.erd-hidden {
+  border-bottom: 1px dotted var(--border-strong);
+  cursor: help;
+}
+
+.erd-focus {
+  font-size: 12px;
+  color: var(--text);
+}
+
+.erd-focus code {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  background: var(--info-bg);
+  border-radius: 3px;
+  padding: 1px 4px;
+}
+
+.erd-toolbar .segmented button {
+  font-size: 11.5px;
+  padding: 3px 8px;
+}
+
+.erd-legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.erd-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Mirrors .ernode-key so the legend chip reads as the same thing the box does. */
+.erd-legend-key {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 4px;
+}
+
+.erd-legend-line {
+  fill: none;
+  stroke: var(--edge);
+  stroke-width: 1.4;
+}
+
+.erd-legend-line.is-dashed {
+  stroke-dasharray: 5 3;
+}
+
+.erd-legend-ring {
+  fill: var(--surface);
+  stroke: var(--edge);
+  stroke-width: 1.3;
+}
+
+.erd-legend-note {
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+.erd-legend-note code {
+  font-family: var(--mono);
+  font-size: 10.5px;
+}
+
+/* The one definite height in the tab: the canvas and the details panel both
+   stretch to it, which is what lets each scroll internally. */
+.erd-content {
+  display: flex;
+  gap: 10px;
+  height: calc(100vh - 300px);
+  min-height: 420px;
+}
+
+.erd-loading,
+.erd-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* --- Canvas ---------------------------------------------------------------- */
+
+.erd-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.erd-pane {
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  /* The wheel handler calls preventDefault, but this stops touch devices from
+     scrolling the page while panning the diagram. */
+  touch-action: none;
+}
+
+.erd-pane.is-panning {
+  cursor: grabbing;
+}
+
+.erd-controls {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 3px;
+  box-shadow: var(--shadow);
+}
+
+.erd-controls button {
+  padding: 2px 9px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.erd-zoom {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  min-width: 38px;
+  text-align: right;
+  padding-right: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Table box ------------------------------------------------------------- */
+
+.ernode {
+  cursor: pointer;
+}
+
+.ernode:focus-visible {
+  outline: none;
+}
+
+.ernode-box {
+  fill: var(--surface);
+  stroke: var(--node-proc-line);
+  stroke-width: 1;
+}
+
+.ernode-head {
+  fill: var(--node-proc);
+}
+
+.ernode-title {
+  font-size: 11.5px;
+  font-weight: 600;
+  fill: var(--text);
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.ernode-gutter,
+.ernode-split {
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+
+.ernode-key {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  fill: var(--text-muted);
+  text-anchor: end;
+  pointer-events: none;
+}
+
+.ernode-col {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  fill: var(--text);
+  pointer-events: none;
+}
+
+/* Underlined, as a primary key is written in every other ERD notation. */
+.ernode-col.is-pk {
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.ernode-more {
+  font-size: 9.5px;
+  font-style: italic;
+  fill: var(--text-muted);
+  pointer-events: none;
+}
+
+/* A table whose spec declares no key at all: nothing to relate it by, so it
+   reads as inert rather than as a table whose relationships are missing. */
+.ernode--keyless .ernode-head {
+  fill: var(--surface-alt);
+}
+
+.ernode:hover .ernode-box,
+.ernode:focus-visible .ernode-box {
+  stroke: var(--accent);
+  stroke-width: 1.8;
+}
+
+.ernode--hit .ernode-box,
+.ernode--selected .ernode-box {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.ernode--hit .ernode-head,
+.ernode--selected .ernode-head {
+  fill: var(--info-bg);
+}
+
+.ernode--dim {
+  opacity: 0.18;
+}
+
+/* --- Relationship lines ---------------------------------------------------- */
+
+.eredge-line,
+.eredge-mark {
+  fill: none;
+  stroke: var(--edge);
+  stroke-width: 1.4;
+}
+
+/* Non-identifying: the foreign key is not part of the child's own primary key. */
+.eredge--optional-parent .eredge-line {
+  stroke-dasharray: 5 3;
+}
+
+.eredge-ring {
+  fill: var(--surface);
+  stroke: var(--edge);
+  stroke-width: 1.3;
+}
+
+.eredge--dim {
+  opacity: 0.1;
+}
+
+.eredge--hit .eredge-line,
+.eredge--hit .eredge-mark {
+  stroke: var(--accent);
+  stroke-width: 1.9;
+}
+
+.eredge--hit .eredge-ring {
+  stroke: var(--accent);
+}
+
+/* --- Details panel --------------------------------------------------------- */
+
+.erd-details {
+  width: 300px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.erd-details-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.erd-details-header h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--mono);
+  word-break: break-all;
+}
+
+.erd-details-close {
+  background: none;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 2px 6px;
+  font-size: 14px;
+}
+
+.erd-details-close:hover {
+  color: var(--text);
+  background: none;
+}
+
+.erd-details-body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.erd-details-description {
+  padding: 8px 10px;
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  line-height: 1.45;
+}
+
+.erd-details-columns {
+  padding: 8px 10px;
+}
+
+.erd-details-columns h4 {
+  margin: 0 0 6px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.erd-details-columns table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.erd-details-columns th {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  text-align: left;
+  padding: 4px 2px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.erd-details-columns td {
+  padding: 4px 2px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: top;
+}
+
+.erd-col-name {
+  font-family: var(--mono);
+  word-break: break-all;
+}
+
+.erd-col-type {
+  color: var(--text-muted);
+  font-family: var(--mono);
+}
+
+.erd-col-nullable {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.erd-col-role {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Scoped to the ERD panel on purpose: a bare `.badge` here would land after the
+   global one and restyle every badge in the app. */
+.erd-col-role .badge {
+  font-size: 9px;
+  padding: 1px 4px;
+  margin-left: 2px;
+}
+
+.erd-col-role .badge-pk {
+  background: var(--success-bg);
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.erd-col-role .badge-fk {
+  background: var(--info-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.erd-details-modified {
+  margin: 0;
+  padding: 6px 10px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}

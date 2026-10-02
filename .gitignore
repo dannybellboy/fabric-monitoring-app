@@ -1,0 +1,21 @@
+# Local configuration: contains the publish notebook id, not secrets, but it is
+# per-environment so it should not be shared.
+server/config.json
+
+# Secrets
+.env
+.env.*
+
+# Confluence sync scripts/credentials for this use case
+confluence/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Node / Vite
+web/node_modules/
+web/dist/
+
+# Packaged build output (python.ps1 / package.ps1)
+dist/
