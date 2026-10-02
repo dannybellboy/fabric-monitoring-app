@@ -44,7 +44,17 @@ placeholders. Values can also be set via `DG_<FIELD>` environment variables
   `orch.dependencygraph`, etc.) — object *names*, not IDs; rename to match
   your own warehouse if different.
 
-## 4. Not included in this push
+## 4. `NB_Orchestrator_WH.ipynb`
+
+This Fabric notebook's production lock/queue/poll logic resolves its workspace
+id dynamically from `notebookutils.runtime.context` — no change needed there.
+Two ad-hoc query cells near the top hardcoded the DEV workspace id instead;
+they now hold the placeholder `<dev-workspace-guid>` — replace it with your
+own DEV workspace GUID (same value as `workspace_id` above) if you use those
+cells for interactive querying. All cell outputs were cleared before pushing,
+since they contained a real pipeline job ID and run data from an executed run.
+
+## 5. Not included in this push
 
 The original repo's `dist/` folder (a packaged build with an embedded Python
 runtime and a baked `config.json`) was intentionally left out — it's a build
